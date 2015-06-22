@@ -18,7 +18,7 @@
 #include <time.h>
 
 #include "CEdge.h"
-#include "CGraph.h"
 #include "CPath.h"
+#include "CGraph.h"
 
 #endif

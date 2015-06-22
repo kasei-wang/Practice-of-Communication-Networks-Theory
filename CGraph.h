@@ -375,6 +375,7 @@ public:
 
         //init vecVertex by INFI DISTANCE
         vector<vector<int> > vecVertex(nVertex, vector<int>(2,10000000));
+        vector<vector<int> > vecResultPath;
         //[0] PreVertex
         vecVertex[isourceVertex][0]=isourceVertex;
         //[1] Distance
@@ -418,30 +419,16 @@ public:
             mmpMarkVertexDistence.erase(itemmpMarkVertexBegin);
         }
 
-        if( itailVertex != -1 ) {
-            cout << "<<====" << "到\t" << itailVertex << "\t最短路" << "====>>" << endl ;
-            cout << "|-" <<"节点" << "  ---  " << "距离" << endl ;
-            j=itailVertex;
-            while(j!=isourceVertex) {
-                cout << "|- " <<j << "   ---   " << vecVertex[j][1] << endl ;
-                j=vecVertex[j][0];
-            }
-            cout << "|- " <<j << "   ---   " << vecVertex[j][1] << endl ;
-            cout << "<<================================>>" << endl ;
+        i=itailVertex;
+        while( i != isourceVertex ) {
+            vecResultPath.push_back(vector<int>(2,i));
+            (*(vecResultPath.end()-1))[1] = vecVertex[i][1] ;
+            i = vecVertex[i][0];
         }
-        else {
-            for(itailVertex=0;itailVertex<nVertex;++itailVertex) {
-                cout << "<<====" << "到\t" << itailVertex << "\t最短路" << "====>>" << endl ;
-                cout << "|-" <<"节点" << "  ---  " << "距离" << endl ;
-                j=itailVertex;
-                while(j!=isourceVertex) {
-                    cout << "|- " <<j << "   ---   " << vecVertex[j][1] << endl ;
-                    j=vecVertex[j][0];
-                }
-                cout << "|- " <<j << "   ---   " << vecVertex[j][1] << endl ;
-                cout << "<<================================>>" << endl ;
-            }
-        }
+        vecResultPath.push_back(vector<int>(2,i));
+        (*(vecResultPath.end()-1))[1] = 0 ;
+        CPath Result(vecResultPath);
+        Result.PrintScreen();
     }
 
     void DijkstraAlgBeta(int isourceVertex)
