@@ -263,12 +263,10 @@ public:
             return true;
     }
 
-    //不使用tailVertex时置为 -1，不使用minCap时置为 0
     void DijkstraAlg(int isourceVertex,int itailVertex,int iminCap)
     {
         unsigned int i,j;
         vector<vector<int> > vecGraph=vecGraphWeight;
-        //处理图使其符合带宽约束
         if(iminCap != 0) {
             for(i=0 ;i<nVertex ;++i) {
                 for(j=0 ;j<nVertex ;++j) {
@@ -278,7 +276,6 @@ public:
             }
         }
 
-        //建立最短路径树的存储结构
         vector<vector<int> > vecVertex(nVertex, vector<int>(2,10000000));
         vecVertex[isourceVertex][0]=isourceVertex;
         vecVertex[isourceVertex][1]=0;
@@ -286,13 +283,12 @@ public:
         map<int,int>    mapMarkVertexDistence;
         map<int,int>::iterator itemapMarkVertex;
 
-        //建立标记节点存储结构
         for(i=0 ;i<nVertex ; ++i) {
             mapMarkVertexDistence[i]=10000000;
         }
         mapMarkVertexDistence.erase(isourceVertex);
 
-        //Update(source)更新距离标记
+        //Update(source)
         for(itemapMarkVertex=mapMarkVertexDistence.begin();itemapMarkVertex!=mapMarkVertexDistence.end();++itemapMarkVertex) {
             if( vecGraph[itemapMarkVertex->first][isourceVertex] != 0 ) {
                 mapMarkVertexPre[itemapMarkVertex->first]=isourceVertex;
@@ -300,7 +296,6 @@ public:
             }
         }
 
-        //向最短路径树上添加节点，直至标记节点集合为空
         while(mapMarkVertexDistence.empty() != true) {
                 j=mapMarkVertexDistence.begin()->first;
                 //取距离标记最小的结点为J,将它加到树上,并从标记点中删除
@@ -311,7 +306,7 @@ public:
                 vecVertex[j][0]=mapMarkVertexPre[j];
                 vecVertex[j][1]=mapMarkVertexDistence[j];
 
-                //Update(j)，更新距离标记
+                //Update(j)
                 for(itemapMarkVertex=mapMarkVertexDistence.begin();itemapMarkVertex!=mapMarkVertexDistence.end();++itemapMarkVertex) {
                     if( vecGraph[itemapMarkVertex->first][j] != 0 &&
                         vecGraph[itemapMarkVertex->first][j]+mapMarkVertexDistence[j] < itemapMarkVertex->second ) {
@@ -323,15 +318,6 @@ public:
                 mapMarkVertexDistence.erase(j);
             }
 
-        /*
-        //输出最小路径树
-        for(i=0 ; i < nVertex ; ++i)
-        {
-            cout << vecVertex[i][0] << ";" << vecVertex[i][1] << ";" << vecVertex[i][2] << ";" << endl;
-        }
-        */
-
-        //指定tail节点时输出指定路径
         if( itailVertex != -1 ) {
             cout << "<<====" << "到\t" << itailVertex << "\t最短路" << "====>>" << endl ;
             cout << "|-" <<"节点" << "  ---  " << "距离" << endl ;
@@ -343,7 +329,6 @@ public:
             cout << "|- " <<j << "   ---   " << vecVertex[j][1] << endl ;
             cout << "<<================================>>" << endl ;
         }
-        //未指定tail结点时，输出全部路径
         else {
             for(itailVertex=0;itailVertex<nVertex;++itailVertex) {
                 cout << "<<====" << "到\t" << itailVertex << "\t最短路" << "====>>" << endl ;
