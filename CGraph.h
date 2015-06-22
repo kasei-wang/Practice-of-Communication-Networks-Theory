@@ -200,6 +200,20 @@ public:
         MapVertexID();
         buildvecGraphWeight();
     }
+    CGraph(vector<vector<int> > vecGraphWeightInput)
+    {
+        vecGraphWeight = vecGraphWeightInput;
+        int i,j,ivecGraphWeightXSize=vecGraphWeightInput.size(),ivecGraphWeightYSize;
+        vector<int>::iterator itevecGraphWeightY;
+        for(i=0; i<ivecGraphWeightXSize; ++i) {
+            for(ivecGraphWeightYSize = vecGraphWeightInput[i].size(), j=0; j<ivecGraphWeightYSize; ++j) {
+                if( vecGraphWeightInput[i][j] != 0 ) {
+                    plstIncident.push_back(new CEdge(i,j,vecGraphWeightInput[i][j]));
+                }
+            }
+        }
+        buildlstVertex();
+    }
     CGraph(CGraph &x)
     {
         nVertex=x.nVertex;
