@@ -19,5 +19,6 @@
 
 #include "CEdge.h"
 #include "CGraph.h"
+#include "CPath.h"
 
 #endif
