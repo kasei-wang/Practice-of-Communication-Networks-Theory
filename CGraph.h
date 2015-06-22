@@ -276,13 +276,17 @@ public:
             }
         }
 
+        //init vecVertex by INFI DISTANCE
         vector<vector<int> > vecVertex(nVertex, vector<int>(2,10000000));
+        //[0] PreVertex
         vecVertex[isourceVertex][0]=isourceVertex;
+        //[1] Distance
         vecVertex[isourceVertex][1]=0;
         map<int,int>    mapMarkVertexPre;
         map<int,int>    mapMarkVertexDistence;
         map<int,int>::iterator itemapMarkVertex;
 
+        //init mapMarkVertexDistence by INFI DISTANCE
         for(i=0 ;i<nVertex ; ++i) {
             mapMarkVertexDistence[i]=10000000;
         }
@@ -297,26 +301,108 @@ public:
         }
 
         while(mapMarkVertexDistence.empty() != true) {
-                j=mapMarkVertexDistence.begin()->first;
-                //取距离标记最小的结点为J,将它加到树上,并从标记点中删除
-                for(itemapMarkVertex=mapMarkVertexDistence.begin();itemapMarkVertex!=mapMarkVertexDistence.end();++itemapMarkVertex) {
-                    if(mapMarkVertexDistence[j] > itemapMarkVertex->second)
-                        j=itemapMarkVertex->first;
-                }
-                vecVertex[j][0]=mapMarkVertexPre[j];
-                vecVertex[j][1]=mapMarkVertexDistence[j];
-
-                //Update(j)
-                for(itemapMarkVertex=mapMarkVertexDistence.begin();itemapMarkVertex!=mapMarkVertexDistence.end();++itemapMarkVertex) {
-                    if( vecGraph[itemapMarkVertex->first][j] != 0 &&
-                        vecGraph[itemapMarkVertex->first][j]+mapMarkVertexDistence[j] < itemapMarkVertex->second ) {
-                        mapMarkVertexPre[itemapMarkVertex->first]=j;
-                        mapMarkVertexDistence[itemapMarkVertex->first] = vecGraph[itemapMarkVertex->first][j]+mapMarkVertexDistence[j];
-                    }
-                }
-                mapMarkVertexPre.erase(j);
-                mapMarkVertexDistence.erase(j);
+            j=mapMarkVertexDistence.begin()->first;
+            for(itemapMarkVertex=mapMarkVertexDistence.begin();itemapMarkVertex!=mapMarkVertexDistence.end();++itemapMarkVertex) {
+                if(mapMarkVertexDistence[j] > itemapMarkVertex->second)
+                    j=itemapMarkVertex->first;
             }
+            vecVertex[j][0]=mapMarkVertexPre[j];
+            vecVertex[j][1]=mapMarkVertexDistence[j];
+
+            //Update(j)
+            for(itemapMarkVertex=mapMarkVertexDistence.begin();itemapMarkVertex!=mapMarkVertexDistence.end();++itemapMarkVertex) {
+                if( vecGraph[itemapMarkVertex->first][j] != 0 &&
+                    vecGraph[itemapMarkVertex->first][j]+mapMarkVertexDistence[j] < itemapMarkVertex->second ) {
+                    mapMarkVertexPre[itemapMarkVertex->first]=j;
+                    mapMarkVertexDistence[itemapMarkVertex->first] = vecGraph[itemapMarkVertex->first][j]+mapMarkVertexDistence[j];
+                }
+            }
+            mapMarkVertexPre.erase(j);
+            mapMarkVertexDistence.erase(j);
+        }
+
+        if( itailVertex != -1 ) {
+            cout << "<<====" << "到\t" << itailVertex << "\t最短路" << "====>>" << endl ;
+            cout << "|-" <<"节点" << "  ---  " << "距离" << endl ;
+            j=itailVertex;
+            while(j!=isourceVertex) {
+                cout << "|- " <<j << "   ---   " << vecVertex[j][1] << endl ;
+                j=vecVertex[j][0];
+            }
+            cout << "|- " <<j << "   ---   " << vecVertex[j][1] << endl ;
+            cout << "<<================================>>" << endl ;
+        }
+        else {
+            for(itailVertex=0;itailVertex<nVertex;++itailVertex) {
+                cout << "<<====" << "到\t" << itailVertex << "\t最短路" << "====>>" << endl ;
+                cout << "|-" <<"节点" << "  ---  " << "距离" << endl ;
+                j=itailVertex;
+                while(j!=isourceVertex) {
+                    cout << "|- " <<j << "   ---   " << vecVertex[j][1] << endl ;
+                    j=vecVertex[j][0];
+                }
+                cout << "|- " <<j << "   ---   " << vecVertex[j][1] << endl ;
+                cout << "<<================================>>" << endl ;
+            }
+        }
+    }
+    void DijkstraAlgDial(int isourceVertex,int itailVertex,int iminCap)
+    {
+        unsigned int i,j;
+        vector<vector<int> > vecGraph= vecGraphWeight;
+        if(iminCap != 0) {
+            for(i=0 ;i<nVertex ;++i) {
+                for(j=0 ;j<nVertex ;++j) {
+                    if(vecGraph[i][j]<iminCap)
+                        vecGraph[i][j] = 0;
+                }
+            }
+        }
+
+        //init vecVertex by INFI DISTANCE
+        vector<vector<int> > vecVertex(nVertex, vector<int>(2,10000000));
+        //[0] PreVertex
+        vecVertex[isourceVertex][0]=isourceVertex;
+        //[1] Distance
+        vecVertex[isourceVertex][1]=0;
+        map<int,int>    mapMarkVertexPre;
+        multimap<int,int> mmpMarkVertexDistence;
+        multimap<int,int>::iterator itemmpMarkVertex,itemmpMarkVertexBegin;
+
+        for(i=0 ;i<nVertex ; ++i) {
+            if(i!=isourceVertex)
+                mmpMarkVertexDistence.insert(pair<int,int>(10000000,i));
+        }
+        mapMarkVertexPre.insert(pair<int,int>(isourceVertex,isourceVertex));
+
+        for(itemmpMarkVertex=mmpMarkVertexDistence.begin();itemmpMarkVertex!=mmpMarkVertexDistence.end();) {
+            if( vecGraph[itemmpMarkVertex->second][isourceVertex] != 0 ) {
+                mapMarkVertexPre[itemmpMarkVertex->second]=isourceVertex;
+                mmpMarkVertexDistence.insert(pair<int,int>(vecGraph[itemmpMarkVertex->second][isourceVertex],itemmpMarkVertex->second));
+                itemmpMarkVertex=mmpMarkVertexDistence.erase(itemmpMarkVertex);
+            }
+            else {
+                ++itemmpMarkVertex;
+            }
+        }
+
+        while( !mmpMarkVertexDistence.empty() ) {
+            itemmpMarkVertexBegin=mmpMarkVertexDistence.begin();
+            vecVertex[itemmpMarkVertexBegin->second][0]=mapMarkVertexPre[itemmpMarkVertexBegin->second];
+            vecVertex[itemmpMarkVertexBegin->second][1]=itemmpMarkVertexBegin->first;
+
+            //Update(itemmpMarkVertexBegin->second)
+            for(itemmpMarkVertex=mmpMarkVertexDistence.begin();itemmpMarkVertex!=mmpMarkVertexDistence.end();++itemmpMarkVertex) {
+                if( vecGraph[itemmpMarkVertex->second][itemmpMarkVertexBegin->second] != 0 &&
+                    vecGraph[itemmpMarkVertex->second][itemmpMarkVertexBegin->second]+itemmpMarkVertexBegin->first < itemmpMarkVertex->first ) {
+                        mapMarkVertexPre[itemmpMarkVertex->second]=itemmpMarkVertexBegin->second;
+                        mmpMarkVertexDistence.insert(pair<int,int>(vecGraph[itemmpMarkVertex->second][itemmpMarkVertexBegin->second]+itemmpMarkVertexBegin->first,itemmpMarkVertex->second));
+                        itemmpMarkVertex=mmpMarkVertexDistence.erase(itemmpMarkVertex);
+                }
+            }
+            mapMarkVertexPre.erase(itemmpMarkVertexBegin->second);
+            mmpMarkVertexDistence.erase(itemmpMarkVertexBegin);
+        }
 
         if( itailVertex != -1 ) {
             cout << "<<====" << "到\t" << itailVertex << "\t最短路" << "====>>" << endl ;
@@ -344,7 +430,6 @@ public:
         }
     }
 
-    //最大通过率路径问题
     void DijkstraAlgBeta(int isourceVertex)
     {
         unsigned int i,j;
