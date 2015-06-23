@@ -135,6 +135,21 @@ private:
         buildlstVertex();
         return;
     }
+    void CapacityConstraint(int minCap)
+    {
+        int i,j;
+        list<CEdge*>::iterator iteplstIncident;
+        for(iteplstIncident=plstIncident.begin(); iteplstIncident != plstIncident.end();) {
+            if( (**iteplstIncident).getCap() < minCap ) {
+                delete *iteplstIncident;
+                iteplstIncident = plstIncident.erase(iteplstIncident);
+            }
+            else
+                ++iteplstIncident;
+        }
+        buildlstVertex();
+        buildvecGraphWeight();
+    }
 
 public:
     CGraph(unsigned int nERVertex,unsigned int nEREdge)
@@ -282,12 +297,7 @@ public:
         unsigned int i,j;
         vector<vector<int> > vecGraph=vecGraphWeight;
         if(iminCap != 0) {
-            for(i=0 ;i<nVertex ;++i) {
-                for(j=0 ;j<nVertex ;++j) {
-                    if(vecGraph[i][j]<iminCap)
-                        vecGraph[i][j] = 0;
-                }
-            }
+            CapacityConstraint(iminCap);
         }
 
         //init vecVertex by INFI DISTANCE
@@ -352,12 +362,7 @@ public:
         unsigned int i,j;
         vector<vector<int> > vecGraph = vecGraphWeight;
         if(iminCap != 0) {
-            for(i=0 ;i<nVertex ;++i) {
-                for(j=0 ;j<nVertex ;++j) {
-                    if(vecGraph[i][j]<iminCap)
-                        vecGraph[i][j] = 0;
-                }
-            }
+            CapacityConstraint(iminCap);
         }
 
         //init vecVertex by INFI DISTANCE

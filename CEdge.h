@@ -73,7 +73,7 @@ public:
 	{
 		return nCapacity;
 	}
-	void getCap(int isetCap)
+	void setCap(int isetCap)
 	{
 		nCapacity = isetCap;
 	}
@@ -97,4 +97,3 @@ public:
 		else return false;
 	}
 };
-
