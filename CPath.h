@@ -7,6 +7,11 @@ private:
     int iHop,iLength;
     vector<vector<int> > vecPathDistence;
 public:
+    CPath()
+    {
+        iHop = 0;
+        iLength = 0;
+    }
     CPath(vector<vector<int> > vecPathDistenceInput)
     {
         int i;

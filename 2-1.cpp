@@ -4,6 +4,7 @@ using namespace std;
 int main(int argc,char *argv[])
 {
     string readFileName;
+    CPath Result;
     int iSourceVertexID,iTailVertexID;
     if(argc == 1) {
         cout << "readFileName:" ;
@@ -25,8 +26,10 @@ int main(int argc,char *argv[])
     cout << "结点数：" << xxx.getVertex() << endl;
     cout << "边数：" << xxx.getEdge() << endl;
     a = clock();
-    xxx.DijkstraAlg(iSourceVertexID,iTailVertexID,0);
-    xxx.DijkstraAlgDial(iSourceVertexID,iTailVertexID,0);
+    Result=xxx.DijkstraAlg(iSourceVertexID,iTailVertexID,0);
+    Result.PrintScreen();
+    Result=xxx.DijkstraAlgDial(iSourceVertexID,iTailVertexID,0);
+    Result.PrintScreen();
     b = clock();
     cout << "Time:" <<  (double)(b-a)/CLOCKS_PER_SEC << endl;
     return 0;
