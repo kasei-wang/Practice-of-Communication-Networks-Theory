@@ -40,8 +40,8 @@ public:
     {
         int i;
         cout << "Hop:" << iHop << endl;
-        cout << "Length" << iLength << endl;
-        cout << "Path:" ;
+        cout << "Length:" << iLength << endl;
+        cout << "Path:    " ;
         for(i=iHop-1; i>0; --i) {
             cout << vecPathDistence[i][0] << "->" ;
         }
