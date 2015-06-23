@@ -69,7 +69,6 @@ private:
             vecGraph[(**iteIncident).getHead()][(**iteIncident).getTail()]=(**iteIncident).getWeight();
             vecGraph[(**iteIncident).getTail()][(**iteIncident).getHead()]=(**iteIncident).getWeight();
         }
-        cout << vecGraph[5][1] << endl;
         vecGraphWeight=vecGraph;
     }
 
@@ -90,16 +89,12 @@ private:
         unsigned int uEdge , uTmp=nERVertex*nERVertex,uHead,uTail;
         list<unsigned int> lstuIDEdge;
         do {
-            //uEdge = rd()%uTmp ;
             uHead=rd()%nERVertex;
             uTail=rd()%uHead;
             if(uHead!=uTail) {
-                //lstuIDEdge.push_back(uEdge);
-                //plstIncident.push_back(new CEdge(uEdge%nERVertex , (uEdge-uEdge%nERVertex)/nERVertex, rd()%100 , rd()%100 ));
                 plstIncident.push_back(new CEdge( uHead ,uTail, rd()%100 , rd()%100 ));
             }
         }
-        //循环到边的数目达到指定值
         while (plstIncident.size() < nEREdge);
 
         buildlstVertex();
@@ -109,30 +104,30 @@ private:
     }
 
     //Waxman生成算法
-    void Waxman(unsigned int nMatrixEdge,unsigned int nWaxmanVertex, double alpha,double beta)
+    void Waxman(unsigned int nMatrixEdgeSize,unsigned int nWaxmanVertex, double alpha,double beta)
     {
-        beta=1/(beta*nMatrixEdge*sqrt(2));
+        beta=1/(beta*nMatrixEdgeSize*sqrt(2));
         clearplstIncident();
         std::random_device rd;
         float arrVertexP[nWaxmanVertex][nWaxmanVertex];
         vector<int> vecWaxmanVertex;
         unsigned int m,i,j;
-        //从矩阵中随机取点
         do {
-            m = rd() % (nMatrixEdge*nMatrixEdge);
+            m = rd() % (nMatrixEdgeSize*nMatrixEdgeSize);
             if (find(vecWaxmanVertex.begin(), vecWaxmanVertex.end(),m) == vecWaxmanVertex.end())
                 vecWaxmanVertex.push_back(m);
         }
         while (vecWaxmanVertex.size() < nWaxmanVertex);
         sort(vecWaxmanVertex.begin(), vecWaxmanVertex.end());
-        //在二维数组中存储两点间连线的概率
         for(i=0; i<nWaxmanVertex; ++i)
             for(j=i,++j; j<nWaxmanVertex; ++j) {
-                arrVertexP[i][j]=sqrt(pow(vecWaxmanVertex[j]%nMatrixEdge - vecWaxmanVertex[i]%nMatrixEdge ,2)+pow( vecWaxmanVertex[j]/nMatrixEdge - vecWaxmanVertex[i]/nMatrixEdge ,2 ));
+                arrVertexP[i][j]=sqrt(pow(vecWaxmanVertex[j]%nMatrixEdgeSize - vecWaxmanVertex[i]%nMatrixEdgeSize ,2)+pow( vecWaxmanVertex[j]/nMatrixEdgeSize - vecWaxmanVertex[i]/nMatrixEdgeSize ,2 ));
                 if( (double)(alpha*exp(-arrVertexP[i][j]*beta)) > (double)(rd()%RAND_MAX)/RAND_MAX )
-                    plstIncident.push_back(new CEdge(vecWaxmanVertex[i],vecWaxmanVertex[j],arrVertexP[i][j],rd()%nMatrixEdge));
+                    plstIncident.push_back(new CEdge(vecWaxmanVertex[i],vecWaxmanVertex[j],arrVertexP[i][j],rd()%nMatrixEdgeSize));
         }
         buildlstVertex();
+        MapVertexID();
+        buildvecGraphWeight();
         return;
     }
     void CapacityConstraint(int minCap)
@@ -199,7 +194,6 @@ public:
         }
         while(file.peek()!=EOF) {
             getline(file,strCEdge);
-            //cout << strCEdge << endl;
             iLengthstrCEgde=strCEdge.length();
             CEdgeMember.clear();
             for(istrCEdge=0,iFlagstrCEdge=0; istrCEdge<=iLengthstrCEgde; ++istrCEdge) {
@@ -209,7 +203,6 @@ public:
                 }
             }
             plstIncident.push_back(new CEdge(CEdgeMember[0],CEdgeMember[1],CEdgeMember[2],CEdgeMember[3]));
-            //cout << CEdgeMember[0] << ";"<<CEdgeMember[1]<<";"<<CEdgeMember[2]<<";"<<CEdgeMember[3] << endl;
         }
         buildlstVertex();
         MapVertexID();
@@ -579,20 +572,15 @@ public:
         deque<int>::iterator itedeqMinHopPath;
         deque<int>::iterator itedeqMinHopPathEnd;
         while( !deqMinHopPath.empty() ) {
-            cout << deqMinHopPath.size() << endl;
             itedeqMinHopPath=deqMinHopPath.begin();
             itedeqMinHopPathEnd=deqMinHopPath.end()-1;
             iMaxFlow = vecGraphResidual[*deqMinHopPath.begin()][*(deqMinHopPath.begin()+1)];
-            //cout << iMaxFlow << endl;
             for(itedeqMinHopPath=deqMinHopPath.begin();itedeqMinHopPath!=itedeqMinHopPathEnd;++itedeqMinHopPath) {
                 iMaxFlow = min(iMaxFlow,vecGraphResidual[*itedeqMinHopPath][*(itedeqMinHopPath+1)]);
-                cout << iMaxFlow << endl;
             }
             for(itedeqMinHopPath=deqMinHopPath.begin();itedeqMinHopPath!=itedeqMinHopPathEnd;++itedeqMinHopPath) {
                 vecGraphResidual[*itedeqMinHopPath][*(itedeqMinHopPath+1)]-=iMaxFlow;
-                cout << vecGraphResidual[*itedeqMinHopPath][*(itedeqMinHopPath+1)] << "\t";
                 vecGraphResidual[*(itedeqMinHopPath+1)][*itedeqMinHopPath]+=iMaxFlow;
-                cout << vecGraphResidual[*(itedeqMinHopPath+1)][*itedeqMinHopPath] << endl;
                 vecFlow[*itedeqMinHopPath][*(itedeqMinHopPath+1)]+=iMaxFlow;
                 iFlow=min(vecFlow[*itedeqMinHopPath][*(itedeqMinHopPath+1)],vecFlow[*(itedeqMinHopPath+1)][*itedeqMinHopPath]);
                 vecFlow[*itedeqMinHopPath][*(itedeqMinHopPath+1)]-=iFlow;
@@ -605,13 +593,8 @@ public:
                 if(vecFlow[iActiveVertex][iAdmissibleVertex]!=0)
                 cout << "vecFlow[" << iActiveVertex<<"]["<<iAdmissibleVertex<<"]=" << vecFlow[iActiveVertex][iAdmissibleVertex] <<endl;
         }
-        /*
-        for(iActiveVertex=0;iActiveVertex<nVertex;++iActiveVertex)
-            {for(iAdmissibleVertex=0;iAdmissibleVertex<nVertex;++iAdmissibleVertex)
-            {
-                cout <<  vecGraphResidual[iActiveVertex][iAdmissibleVertex] ;
-            }cout << endl;}*/
     }
+
     //返回存储<ID,Hop>的map，不含iRootVertex
     map<int,int> BFS_HopMap(const vector<vector<int> >* pvecGraph,int iRootVertex)
     {
@@ -655,13 +638,11 @@ public:
         //存储结点距离标记，并初始化源结点路由标记
         map<int,int> mapVertexDistanceLabel=BFS_HopMap(&vecGraphResidual,itailVertex);
         mapVertexDistanceLabel[isourceVertex]=nVertex;
-        cout <<"shop"<<mapVertexDistanceLabel[isourceVertex] << endl;
         //存储结点的多余流量
         map<int,int> mapVertexExcess;
         //ActiveVertex结点队列，FIFO
         deque<int> deqActiveVertex;
         //初始化，尽量从源节点推送流量
-        cout << "begin!" << endl;
         for(int i=0 ;i<nVertex ;++i ) {
             if(vecGraphResidual[isourceVertex][i]!=0) {
                 mapVertexExcess[i]=vecGraphResidual[isourceVertex][i];
@@ -671,29 +652,19 @@ public:
                 deqActiveVertex.push_back(i);
             }
         }
-        cout << "hhh" << endl;
-        if(find(deqActiveVertex.begin(),deqActiveVertex.end(),isourceVertex)!=deqActiveVertex.end())
-            cout << "erroereoeoeoeoeo"<<endl;
 
         while( !deqActiveVertex.empty() ) {
             iActiveVertex=deqActiveVertex.front();
             iHop=mapVertexDistanceLabel[iActiveVertex]-1;
-            //cout << "tohop" << iHop<<endl;
             iFlow=0;
-            //cout << "bilegou:"<<vecGraphResidual[iActiveVertex][isourceVertex] << "\t";
-            //cout << mapVertexDistanceLabel[isourceVertex] << "\t";
-            //cout << nVertex << "\t" ;
-            //cout << iHop << endl;
             //寻找Admissible边，确定可用流量
             for(iAdmissibleVertex=0;iAdmissibleVertex<nVertex;++iAdmissibleVertex) {
                 if( mapVertexDistanceLabel[iAdmissibleVertex]==iHop
                     && vecGraphResidual[iActiveVertex][iAdmissibleVertex] >0 ) {
-                        cout << "keyong:" << vecGraphResidual[iActiveVertex][iAdmissibleVertex];
                         iFlow=min(mapVertexExcess[iActiveVertex],vecGraphResidual[iActiveVertex][iAdmissibleVertex]);
                         break;
                 }
             }
-            //cout << iFlow << endl;
 
             if(iFlow != 0 ) {
                 //更新节点的多余流量
@@ -723,11 +694,9 @@ public:
                 for(iAdmissibleVertex=0;iAdmissibleVertex<nVertex;++iAdmissibleVertex) {
                     if( vecGraphResidual[iActiveVertex][iAdmissibleVertex] > 0 ) {
                         iHop=min(iHop,mapVertexDistanceLabel[iAdmissibleVertex]);
-                        //cout << "find:" <<iHop<< endl;
                     }
                 }
                 mapVertexDistanceLabel[iActiveVertex]=iHop+1;
-                //cout << iHop << endl;
             }
         }
 
@@ -744,10 +713,10 @@ public:
     }
 
     //输出到文件
-    void getFile()
+    void getFile(string FileName)
     {
         ofstream file;
-        file.open("output.txt");
+        file.open(FileName);
         list<CEdge*>::iterator itepIncident = plstIncident.begin();
         for (; itepIncident != plstIncident.end(); ++itepIncident) {
                 file << (*itepIncident)->getHead() << ";" << (*itepIncident)->getTail()
@@ -757,25 +726,10 @@ public:
         return;
     }
 
-    void getTaoYuFile()
+    void getLingoFile(string FileName)
     {
         ofstream file;
-        file.open("TaoYu.txt");
-        list<CEdge*>::iterator itepIncident = plstIncident.begin();
-
-        file << nVertex << " " << plstIncident.size() << endl;
-        for (; itepIncident != plstIncident.end(); ++itepIncident) {
-                file << (*itepIncident)->getHead()+1 << " " << (*itepIncident)->getTail()+1
-                     << " " << (*itepIncident)->getWeight() << endl;
-        }
-        file.close();
-        return;
-    }
-
-    void getLingoFile()
-    {
-        ofstream file;
-        file.open("lingo.txt");
+        file.open(FileName);
         list<CEdge*>::iterator itepIncident = plstIncident.begin();
         list<int>::iterator itelstVertex = lstVertex.begin();
 

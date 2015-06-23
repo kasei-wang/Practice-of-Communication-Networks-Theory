@@ -39,14 +39,14 @@ public:
     void PrintScreen()
     {
         int i;
-        cout << "Hop:" << iHop << endl;
-        cout << "Length:" << iLength << endl;
-        cout << "Path:    " ;
+        cout << "> Hop:" << iHop << "\t";
+        cout << "> Length:" << iLength << endl;
+        cout << "> Path:    " ;
         for(i=iHop-1; i>0; --i) {
             cout << vecPathDistence[i][0] << "->" ;
         }
         cout << vecPathDistence[0][0] ;
-        cout << endl << "Distence:" ;
+        cout << endl << "> Distence:" ;
         for(i=iHop-1; i>0; --i) {
             cout << vecPathDistence[i][1] << "->" ;
         }

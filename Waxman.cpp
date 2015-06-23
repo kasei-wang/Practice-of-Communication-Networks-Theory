@@ -21,11 +21,10 @@ int main(int argc,char *argv[])
         alpha = atof(argv[1]);
         beta = atof(argv[2]);
     }
-	CGraph xxx(100,100, alpha ,beta );
-	cout << "结点数：" << xxx.getVertex() << endl;
-	cout << "边数：" << xxx.getEdge() << endl;
-	xxx.getFile();
-    xxx.getTaoYuFile();
-    xxx.getLingoFile();
-	return 0;
+    CGraph xxx(100,100, alpha ,beta );
+    cout << "结点数：" << xxx.getVertex() << endl;
+    cout << "边数：" << xxx.getEdge() << endl;
+    xxx.getFile("output.txt");
+    xxx.getLingoFile("lingo.txt");
+    return 0;
 }
