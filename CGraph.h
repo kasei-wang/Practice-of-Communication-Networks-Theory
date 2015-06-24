@@ -194,15 +194,17 @@ public:
         }
         while(file.peek()!=EOF) {
             getline(file,strCEdge);
-            iLengthstrCEgde=strCEdge.length();
-            CEdgeMember.clear();
-            for(istrCEdge=0,iFlagstrCEdge=0; istrCEdge<=iLengthstrCEgde; ++istrCEdge) {
-                if(strCEdge[istrCEdge]==chrSplit1||istrCEdge==iLengthstrCEgde) {
-                    CEdgeMember.push_back(atoi((strCEdge.substr(iFlagstrCEdge,istrCEdge-iFlagstrCEdge)).c_str()));
-                    iFlagstrCEdge=istrCEdge+1;
+            if( strCEdge[0] != '#' ) {
+                iLengthstrCEgde=strCEdge.length();
+                CEdgeMember.clear();
+                for(istrCEdge=0,iFlagstrCEdge=0; istrCEdge<=iLengthstrCEgde; ++istrCEdge) {
+                    if(strCEdge[istrCEdge]==chrSplit1||istrCEdge==iLengthstrCEgde) {
+                        CEdgeMember.push_back(atoi((strCEdge.substr(iFlagstrCEdge,istrCEdge-iFlagstrCEdge)).c_str()));
+                        iFlagstrCEdge=istrCEdge+1;
+                    }
                 }
+                plstIncident.push_back(new CEdge(CEdgeMember[0],CEdgeMember[1],CEdgeMember[2],CEdgeMember[3]));
             }
-            plstIncident.push_back(new CEdge(CEdgeMember[0],CEdgeMember[1],CEdgeMember[2],CEdgeMember[3]));
         }
         buildlstVertex();
         MapVertexID();
