@@ -719,6 +719,8 @@ public:
     {
         ofstream file;
         file.open(FileName);
+        file << "# VertexNum: " << lstVertex.size() << endl;
+        file << "# EdgeNUm:   " << plstEdge.size() << endl;
         list<CEdge*>::iterator itepIncident = plstIncident.begin();
         for (; itepIncident != plstIncident.end(); ++itepIncident) {
                 file << (*itepIncident)->getHead() << ";" << (*itepIncident)->getTail()
