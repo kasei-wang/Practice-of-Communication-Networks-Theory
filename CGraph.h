@@ -29,6 +29,7 @@ private:
                 ++nVertex;
             }
         }
+        lstVertex.sort();
         return;
     }
 
@@ -290,10 +291,10 @@ public:
     CPath DijkstraAlg(int isourceVertex,int itailVertex,int iminCap)
     {
         unsigned int i,j;
-        vector<vector<int> > vecGraph=vecGraphWeight;
         if(iminCap != 0) {
             CapacityConstraint(iminCap);
         }
+        vector<vector<int> > vecGraph=vecGraphWeight;
 
         //init vecVertex by INFI DISTANCE
         vector<vector<int> > vecVertex(nVertex, vector<int>(2,10000000));
@@ -328,17 +329,16 @@ public:
             }
             vecVertex[j][0]=mapMarkVertexPre[j];
             vecVertex[j][1]=mapMarkVertexDistence[j];
-
+            mapMarkVertexPre.erase(j);
+            mapMarkVertexDistence.erase(j);
             //Update(j)
             for(itemapMarkVertex=mapMarkVertexDistence.begin();itemapMarkVertex!=mapMarkVertexDistence.end();++itemapMarkVertex) {
                 if( vecGraph[itemapMarkVertex->first][j] != 0 &&
-                    vecGraph[itemapMarkVertex->first][j]+mapMarkVertexDistence[j] < itemapMarkVertex->second ) {
+                    vecGraph[itemapMarkVertex->first][j]+vecVertex[j][1] < itemapMarkVertex->second ) {
                     mapMarkVertexPre[itemapMarkVertex->first]=j;
-                    mapMarkVertexDistence[itemapMarkVertex->first] = vecGraph[itemapMarkVertex->first][j]+mapMarkVertexDistence[j];
+                    mapMarkVertexDistence[itemapMarkVertex->first] = vecGraph[itemapMarkVertex->first][j]+vecVertex[j][1];
                 }
             }
-            mapMarkVertexPre.erase(j);
-            mapMarkVertexDistence.erase(j);
         }
 
         i=itailVertex;
@@ -355,10 +355,10 @@ public:
     CPath DijkstraAlgDial(int isourceVertex,int itailVertex,int iminCap)
     {
         unsigned int i,j;
-        vector<vector<int> > vecGraph = vecGraphWeight;
         if(iminCap != 0) {
             CapacityConstraint(iminCap);
         }
+        vector<vector<int> > vecGraph = vecGraphWeight;
 
         //init vecVertex by INFI DISTANCE
         vector<vector<int> > vecVertex(nVertex, vector<int>(2,10000000));
@@ -375,7 +375,6 @@ public:
             if(i!=isourceVertex)
                 mmpMarkVertexDistence.insert(pair<int,int>(10000000,i));
         }
-        mapMarkVertexPre.insert(pair<int,int>(isourceVertex,isourceVertex));
 
         for(itemmpMarkVertex=mmpMarkVertexDistence.begin();itemmpMarkVertex!=mmpMarkVertexDistence.end();) {
             if( vecGraph[itemmpMarkVertex->second][isourceVertex] != 0 ) {
@@ -390,20 +389,26 @@ public:
 
         while( !mmpMarkVertexDistence.empty() ) {
             itemmpMarkVertexBegin=mmpMarkVertexDistence.begin();
-            vecVertex[itemmpMarkVertexBegin->second][0]=mapMarkVertexPre[itemmpMarkVertexBegin->second];
-            vecVertex[itemmpMarkVertexBegin->second][1]=itemmpMarkVertexBegin->first;
+            i=itemmpMarkVertexBegin->second;
+            j=itemmpMarkVertexBegin->first;
+            vecVertex[i][0]=mapMarkVertexPre[i];
+            vecVertex[i][1]=j;
 
-            //Update(itemmpMarkVertexBegin->second)
-            for(itemmpMarkVertex=mmpMarkVertexDistence.begin();itemmpMarkVertex!=mmpMarkVertexDistence.end();++itemmpMarkVertex) {
-                if( vecGraph[itemmpMarkVertex->second][itemmpMarkVertexBegin->second] != 0 &&
-                    vecGraph[itemmpMarkVertex->second][itemmpMarkVertexBegin->second]+itemmpMarkVertexBegin->first < itemmpMarkVertex->first ) {
-                        mapMarkVertexPre[itemmpMarkVertex->second]=itemmpMarkVertexBegin->second;
-                        mmpMarkVertexDistence.insert(pair<int,int>(vecGraph[itemmpMarkVertex->second][itemmpMarkVertexBegin->second]+itemmpMarkVertexBegin->first,itemmpMarkVertex->second));
+            mapMarkVertexPre.erase(i);
+            mmpMarkVertexDistence.erase(itemmpMarkVertexBegin);
+
+            //Update(i)
+            for(itemmpMarkVertex=mmpMarkVertexDistence.begin();itemmpMarkVertex!=mmpMarkVertexDistence.end();) {
+                if( vecGraph[itemmpMarkVertex->second][i] != 0 &&
+                    vecGraph[itemmpMarkVertex->second][i]+j < itemmpMarkVertex->first ) {
+                        mapMarkVertexPre[itemmpMarkVertex->second]=i;
+                        mmpMarkVertexDistence.insert(pair<int,int>(vecGraph[itemmpMarkVertex->second][i]+j,itemmpMarkVertex->second));
                         itemmpMarkVertex=mmpMarkVertexDistence.erase(itemmpMarkVertex);
                 }
+                else {
+                    ++itemmpMarkVertex;
+                }
             }
-            mapMarkVertexPre.erase(itemmpMarkVertexBegin->second);
-            mmpMarkVertexDistence.erase(itemmpMarkVertexBegin);
         }
 
         i=itailVertex;
