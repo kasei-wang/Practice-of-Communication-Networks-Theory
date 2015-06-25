@@ -331,6 +331,9 @@ public:
             vecVertex[j][1]=mapMarkVertexDistence[j];
             mapMarkVertexPre.erase(j);
             mapMarkVertexDistence.erase(j);
+            if( vecVertex[itailVertex][0] != 10000000 ) {
+                break;
+            }
             //Update(j)
             for(itemapMarkVertex=mapMarkVertexDistence.begin();itemapMarkVertex!=mapMarkVertexDistence.end();++itemapMarkVertex) {
                 if( vecGraph[itemapMarkVertex->first][j] != 0 &&
@@ -393,7 +396,9 @@ public:
             j=itemmpMarkVertexBegin->first;
             vecVertex[i][0]=mapMarkVertexPre[i];
             vecVertex[i][1]=j;
-
+            if( vecVertex[itailVertex][0] != 10000000 ) {
+                break;
+            }
             mapMarkVertexPre.erase(i);
             mmpMarkVertexDistence.erase(itemmpMarkVertexBegin);
 
