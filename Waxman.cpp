@@ -1,3 +1,12 @@
+/*
+    waxman生成图，共有5个参数，分别为：矩阵边长、节点数目、alpha参数、beta参数、输出文件名。
+    输出文件格式为：
+    # VertexNum: 节点数
+    # EdgeNUm:   边数
+    起点;终点;属性1;属性2
+    起点;终点;属性1;属性2
+    ......
+*/
 ﻿#include "common.h"
 using namespace std;
 
