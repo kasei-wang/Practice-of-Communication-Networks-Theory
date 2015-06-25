@@ -28,6 +28,14 @@ public:
         iLength = x.iLength;
         vecPathDistence = x.vecPathDistence;
     }
+    void push_back(pair<int,int> vertex)
+    {
+        vecPathDistence.push_back(vector<int>(2,0));
+        (*(vecPathDistence.end()-1))[0] = vertex.first ;
+        (*(vecPathDistence.end()-1))[1] = vertex.second ;
+        ++iHop;
+        iLength+=vertex.second;
+    }
     int getHop()
     {
         return iHop;
