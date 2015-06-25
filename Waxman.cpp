@@ -7,7 +7,7 @@
     起点;终点;属性1;属性2
     ......
 */
-﻿#include "common.h"
+#include "common.h"
 using namespace std;
 
 int main(int argc,char *argv[])

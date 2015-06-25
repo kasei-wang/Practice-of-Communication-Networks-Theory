@@ -1,7 +1,7 @@
 /*
     对比DijkstraAlg和DijkstraAlgDial计算速度。
     共有3个参数：输入文件名、源节点、宿节点。
-*/﻿﻿
+*/
 #include "common.h"
 using namespace std;
 

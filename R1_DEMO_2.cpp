@@ -2,7 +2,7 @@
     对比DijkstraAlg和DijkstraAlgDial计算速度。
     读取十个样本图。每图随机取十对节点计算最短路。每次计算进行100次，取平均值输出。
     无参数。
-*/﻿
+*/
 #include "common.h"
 using namespace std;
 
